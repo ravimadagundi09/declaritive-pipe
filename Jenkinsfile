@@ -29,20 +29,19 @@ pipeline {
                 bat label: 'Project packaging', script: '''mvn package'''
             }
         }
+         stage('SonarQube'){
 
-        stage('Generate Cucumber report') {
-            steps{
-                 cucumber buildStatus: 'UNSTABLE',
-                      reportTitle: 'My Cucumber Report',
-                      fileIncludePattern: '**/*.json',
-                         trendsLimit: 10,
-                      classifications: [
-                          [
-                              'key': 'Browser',
-                              'value': 'Chrome'
-                          ]
-                      ]
-                  }
-         } 
+steps{
+   bat label: '', script: '''mvn sonar:sonar \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=squ_adc1c58c9e00b16c92b159c4bc0effc58144d48a'''
+}
+   } 
+               
       }
+      post {
+       always {
+           cucumber '**/cucumber.json'
+       }
+   }
 }
